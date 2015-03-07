@@ -1,7 +1,9 @@
 //using System.Diagnostics.Eventing.Reader;
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using Assets.Scripts.Items.Weapons;
 using UnityEngine;
 
 namespace Assets.Scripts.Player.Shootable
@@ -10,7 +12,7 @@ namespace Assets.Scripts.Player.Shootable
     {
         #region Fields
 
-        private LineRenderer tracer;
+        //private LineRenderer tracer;
 
         //public Transform spawn;
         [SerializeField]
@@ -20,12 +22,15 @@ namespace Assets.Scripts.Player.Shootable
         [SerializeField]
         public Rigidbody shell;
 
+        public GameObject projectile;
 
 
         [SerializeField]
         protected string _name; // Name of the Weapon
         [SerializeField]
         protected string _description; // Description of the Weapon
+
+        [SerializeField] protected AmmoType _ammoType;
 
         [SerializeField]
         protected float _fireSpeed; // Shots per Second
@@ -73,7 +78,7 @@ namespace Assets.Scripts.Player.Shootable
         }
         #endregion Properties
 
-        public WeaponProperties(string name, string description, float fireSpeed, bool canFullAuto, bool canBurst, bool canSingleShot, RateOfFire fireRate, bool tracer, 
+        public WeaponProperties(string name, string description, AmmoType type, float fireSpeed, bool canFullAuto, bool canBurst, bool canSingleShot, RateOfFire fireRate, bool tracer, 
             float range, float spread, float accuracy, int ammoTotalcount, 
             int ammoTotalMax, int ammoClipMax, float reloadSpeed, float minDamage, float maxDamage)
         {
@@ -83,6 +88,7 @@ namespace Assets.Scripts.Player.Shootable
 
             this._name = name;
             this._description = description;
+            this._ammoType = type;
             this._fireSpeed = fireSpeed;
             this._fireRate = fireRate;
             this._tracer = tracer;
@@ -112,11 +118,6 @@ namespace Assets.Scripts.Player.Shootable
                     _roundsPerShot = 1;
                     _isSingleShot = false;
                     break;
-            }
-
-            if (GetComponent<LineRenderer>())
-            {
-                tracer = GetComponent<LineRenderer>();
             }
         }
 
@@ -234,7 +235,7 @@ namespace Assets.Scripts.Player.Shootable
             _ammoClipCount += reloadAmountNeeded; // Replenish the clip with ammo
             _ammoTotalCount -= reloadAmountNeeded; // Remove ammo from the total count
         }
-        public void Fire()
+        public void FireBullet()
         {
             if (_ammoClipCount > 0) // Has ammo, fire single shot
             {
@@ -258,29 +259,111 @@ namespace Assets.Scripts.Player.Shootable
                     }
                 }
 
-                if (this.GetTracer())
-                {
-                    StartCoroutine("RenderTracer", ray.direction * shotDistance);
-                }
-
-                // Eject new Shell after shot
-                Rigidbody newShell =
-                    Instantiate(shell, shellEjectionPoint.position, Quaternion.identity) as
-                        Rigidbody;
-                newShell.AddForce(shellEjectionPoint.forward * Random.Range(150f, 200f) + bulletEjectionPoint.forward * Random.Range(-10f, 10f));
-
+                // Draw Debug
                 Debug.DrawRay(ray.origin, ray.direction * shotDistance, Color.red, 1);
 
-                Debug.Log("BANG");
-
-
+                //Eject Shell
+                EjectShell();
             }
             else // Out of ammo
             {
                 //Reload();
                 // Start 'No Ammo' Sound
             }
-            // Fire Bullet
+        }
+
+        public void FireSlug()
+        {
+            if (_ammoClipCount > 0) // Has ammo, fire single shot
+            {
+                _ammoClipCount -= 1;
+
+                float shotDistance = _range;
+                // This works... For some reason.
+                //Debug.DrawLine(playerPos, mousePos);
+
+                List<Ray> rays = new List<Ray>();
+                for (int i = 0; i < 8; i++)
+                {
+                    rays.Add(new Ray(bulletEjectionPoint.position, GetBulletSpread()));
+                }
+
+                foreach (Ray r in rays)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(r, out hit, shotDistance))
+                    {
+                        shotDistance = hit.distance;
+                        // Check for hit
+                        if (hit.collider.GetComponent<Entity>())
+                        {
+                            // Apply damage to what was hit.
+                            hit.collider.GetComponent<Entity>().TakeDamage(this.GetDamage());
+                        }
+                    }
+                    // Draw Debug
+                    Debug.DrawRay(r.origin, r.direction * shotDistance, Color.red, 1);
+                }
+                
+                //Eject Shell
+                EjectShell();
+            }
+            else // Out of ammo
+            {
+                //Reload();
+                // Start 'No Ammo' Sound
+            }
+        }
+
+        public void FireProjectile()
+        {
+            if (_ammoClipCount > 0) // Has ammo, fire single shot
+            {
+                _ammoClipCount -= 1;
+
+                float shotDistance = _range;
+                // This works... For some reason.
+                //Debug.DrawLine(playerPos, mousePos);
+
+                /*
+                Ray ray = new Ray(bulletEjectionPoint.position, GetBulletSpread());
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, shotDistance))
+                {
+                    shotDistance = hit.distance;
+                    // Check for hit
+                    if (hit.collider.GetComponent<Entity>())
+                    {
+                        // Apply damage to what was hit.
+                        hit.collider.GetComponent<Entity>().TakeDamage(this.GetDamage());
+                    }
+                }
+
+                // Draw Debug
+                Debug.DrawRay(ray.origin, ray.direction * shotDistance, Color.red, 1);
+
+                //Eject Shell
+                EjectShell();*/
+
+                GameObject newProjectile =
+                    Instantiate(projectile, bulletEjectionPoint.position, Quaternion.identity) as GameObject;
+
+                
+            }
+            else // Out of ammo
+            {
+                //Reload();
+                // Start 'No Ammo' Sound
+            }
+        }
+
+        public void EjectShell()
+        {
+            Rigidbody newShell =
+                    Instantiate(shell, shellEjectionPoint.position, Quaternion.identity) as
+                        Rigidbody;
+            newShell.AddForce(shellEjectionPoint.forward * Random.Range(150f, 200f) + bulletEjectionPoint.forward * Random.Range(-10f, 10f));
         }
 
         private Vector3 GetBulletSpread()
@@ -288,9 +371,9 @@ namespace Assets.Scripts.Player.Shootable
             float ang = _spread/2f;
             float randAng = Random.Range(ang, -ang);
 
-            Vector3 angL = Quaternion.Euler(0, ang, 0)*bulletEjectionPoint.forward;
-            Vector3 angR = Quaternion.Euler(0, -ang, 0) * bulletEjectionPoint.forward;
-            Vector3 spread = Quaternion.Euler(0, randAng, 0)*bulletEjectionPoint.forward;
+            Vector3 angL = Quaternion.Euler(0, ang, 0)*bulletEjectionPoint.up;
+            Vector3 angR = Quaternion.Euler(0, -ang, 0) * bulletEjectionPoint.up;
+            Vector3 spread = Quaternion.Euler(0, randAng, 0) * bulletEjectionPoint.up;
 
            //Vector3 spread = new Vector3(0,Random.Range(angL.y, angR.y),0);
             
@@ -323,19 +406,17 @@ namespace Assets.Scripts.Player.Shootable
             return Random.Range(_minDamage, _maxDamage);
         }
 
-        #endregion Public Methods
-
-
-        IEnumerator RenderTracer(Vector3 hitPoint)
+        public string GetName()
         {
-            tracer.enabled = true;
-            tracer.SetPosition(0, this.transform.position);
-            tracer.SetPosition(1, this.transform.position + hitPoint);
+            return this._name;
+        }
 
-            yield return null;
-            tracer.enabled = false;
+        public AmmoType GetAmmoType()
+        {
+            return this._ammoType;
         }
 
 
+        #endregion Public Methods
     }
 }

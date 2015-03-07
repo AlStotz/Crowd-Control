@@ -50,23 +50,25 @@
      <Compile Include="Assets\DebugMenu.cs" />
      <Compile Include="Assets\Garbage\IndicatorProperties.cs" />
      <Compile Include="Assets\KeyboardLayout.cs" />
-     <Compile Include="Assets\Prefabs\BulletProperties.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\AssaultRifle.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\AssaultShotgun.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\LMG.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\Rocket.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\RocketLauncher.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\SMG.cs" />
+     <Compile Include="Assets\Prefabs\Weapons\SniperRifle.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraTDFollower.cs" />
      <Compile Include="Assets\Scripts\EnemyMovement.cs" />
      <Compile Include="Assets\Scripts\Entity.cs" />
      <Compile Include="Assets\Scripts\Flashlight\Flashlight.cs" />
      <Compile Include="Assets\Scripts\GUI\Cursor.cs" />
      <Compile Include="Assets\Scripts\GUI\GUI_Inventory.cs" />
-     <Compile Include="Assets\Scripts\HotbarSlot.cs" />
      <Compile Include="Assets\Scripts\Input\FollowMouse.cs" />
      <Compile Include="Assets\Scripts\Input\InputManager.cs" />
-     <Compile Include="Assets\Scripts\InventoryHandler.cs" />
-     <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\Items\Throwable\Grenade.cs" />
      <Compile Include="Assets\Scripts\Items\Throwable\Knife.cs" />
      <Compile Include="Assets\Scripts\Misc\DontDestroyOnLoad.cs" />
      <Compile Include="Assets\Scripts\Misc\GlobalEnumerations.cs" />
-     <Compile Include="Assets\Scripts\Misc\WeaponDynamics.cs" />
      <Compile Include="Assets\Scripts\Player\Handlers\NadeHandler.cs" />
      <Compile Include="Assets\Scripts\Player\Handlers\PlayerHandler.cs" />
      <Compile Include="Assets\Scripts\Player\Handlers\WeaponHandler.cs" />
@@ -79,8 +81,9 @@
      <Compile Include="Assets\Scripts\Shell.cs" />
      <Compile Include="Assets\Scripts\SpawnController.cs" />
      <Compile Include="Assets\Scripts\WeaponProperties.cs" />
+     <Compile Include="Assets\Scripts\_Inventory\InventorySystem.cs" />
+     <Compile Include="Assets\Scripts\_Inventory\Weapon.cs" />
      <Compile Include="Assets\Scripts\_Main\GUIHandler.cs" />
-     <Compile Include="Assets\Scripts\_Weapons\M16.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

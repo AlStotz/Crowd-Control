@@ -92,8 +92,8 @@ public class InputManager : MonoBehaviour
 
 		// Check for mouse scrool (zoom)
 		if(Input.GetAxis("Mouse ScrollWheel") < 0)
-			Messenger<float>.Broadcast("SetZoom", _ZoomSensitivity);	
-		else if(Input.GetAxis("Mouse ScrollWheel") > 0)
+			Messenger<float>.Broadcast("SetZoom", _ZoomSensitivity);
+        else if (Input.GetAxis("Mouse ScrollWheel") > 0)
 			Messenger<float>.Broadcast("SetZoom", -_ZoomSensitivity);
 
         // Check for rate of fire change

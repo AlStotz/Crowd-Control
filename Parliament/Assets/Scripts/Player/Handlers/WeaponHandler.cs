@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Xml;
+using Assets.Scripts.Items.Weapons;
 using Assets.Scripts.Player.Shootable;
 using UnityEngine;
 
@@ -37,13 +38,6 @@ namespace Assets.Scripts.Player.Handlers
             Messenger.AddListener("WeaponStartFire", CheckFire);
             Messenger.AddListener ("WeaponStopFire", StopFire);
             Messenger.AddListener("ChangeRateOfFire", ChangeRateOfFire);
-
-            /*
-            if (GetComponent<LineRenderer>())
-            {
-                tracer = GetComponent<LineRenderer>();
-            }
-             * */
         }
 	
         // Update is called once per frame
@@ -62,6 +56,7 @@ namespace Assets.Scripts.Player.Handlers
         }
         #endregion Monobehaviour
         #region Private Methods
+
         private void CheckReload()
         {
             Debug.Log("Checking Reload");
@@ -133,12 +128,25 @@ namespace Assets.Scripts.Player.Handlers
 
         private void Fire()
         {
-            // Check for burst, fire 3 in a row. Else, fire once.
-            if (_primaryWeapon._fireRate == RateOfFire.Burst)
-                for(int i = 0; i < 3; i++)
-                    _primaryWeapon.Fire();
-            else
-                _primaryWeapon.Fire();
+            if (_primaryWeapon.GetAmmoType().Equals(AmmoType.Bullet))
+            {
+                //Shoot Bullet
+                if (_primaryWeapon._fireRate == RateOfFire.Burst)// Check for burst, fire 3 in a row. Else, fire once.
+                    for (int i = 0; i < 3; i++)
+                        _primaryWeapon.FireBullet();
+                else
+                    _primaryWeapon.FireBullet();
+            }
+            else if (_primaryWeapon.GetAmmoType().Equals(AmmoType.Slug))
+            {
+                // Shoot shotgun slug
+                _primaryWeapon.FireSlug();
+            }
+            else if (_primaryWeapon.GetAmmoType().Equals(AmmoType.Projectile))
+            {
+                //Shoot Projectile
+                _primaryWeapon.FireProjectile();
+            }
         }
 
         private void ChangeRateOfFire()
@@ -167,6 +175,7 @@ namespace Assets.Scripts.Player.Handlers
 
             debugStr += "Direction: " + this.transform.forward.ToString() + "\n\n";
 
+            str += "Weapon: " + _primaryWeapon.GetName() + "\n";
             str += "Ammo: " + _primaryWeapon.GetClip() + "/" + _primaryWeapon.GetMaxClip() + "/" + _primaryWeapon.GetTotalAmmo() + "\n";
             str += "Fire Rate: " + _primaryWeapon._fireRate.ToString() + "\n\n";
             str += "FireCounter: " + this._firingCounter.ToString() + "\n\n";
@@ -190,7 +199,7 @@ namespace Assets.Scripts.Player.Handlers
                 str += "\n";
         
 
-            GUI.Box(new Rect(Screen.width-155, 5, 150, 300), str);
+            GUI.Box(new Rect(Screen.width-205, 5, 200, 300), str);
             GUI.Box(new Rect(Screen.width - 205, Screen.height - 105, 200, 100), debugStr);
         }
 
@@ -216,7 +225,7 @@ namespace Assets.Scripts.Player.Handlers
             float range = _primaryWeapon.GetRange();
             float ang = _primaryWeapon.GetSpread()/2f;
 
-            Vector3 ODir = BEP.forward;
+            Vector3 ODir = BEP.up;
 
             Vector3 RDir = Quaternion.Euler(0, ang, 0) * ODir;
             Vector3 LDir = Quaternion.Euler(0, -ang, 0) * ODir;
