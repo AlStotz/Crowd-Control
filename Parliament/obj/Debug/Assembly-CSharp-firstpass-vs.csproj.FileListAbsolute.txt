@@ -21,3 +21,16 @@ C:\Users\Rainbow\Documents\Unity3D Projects\Parliament\obj\Debug\Assembly-CSharp
 C:\Users\Rainbow\Documents\Unity3D Projects\Parliament\obj\Debug\Assembly-CSharp-firstpass.pdb
 C:\Users\Rainbow\Documents\Unity3D Projects\Parliament\Temp\bin\Debug\Unity.SerializationLogic.dll
 C:\Users\Rainbow\Documents\Unity3D Projects\Parliament\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\obj\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Rainbow\Documents\GitHub\Crowd-Control\Parliament\obj\Debug\Assembly-CSharp-firstpass.pdb

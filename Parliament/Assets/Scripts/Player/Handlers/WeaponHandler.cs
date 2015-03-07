@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Assets.Scripts.Player.Shootable;
 using UnityEngine;
@@ -9,7 +10,10 @@ namespace Assets.Scripts.Player.Handlers
     {
         #region Fields
 
-        private LineRenderer tracer;
+        //DEBUG
+        public bool ShowSpread = true;
+
+        //private LineRenderer tracer; // Moved to weapon properties
 
         private const float TIMER_MODIFIER = 60;
 
@@ -34,10 +38,12 @@ namespace Assets.Scripts.Player.Handlers
             Messenger.AddListener ("WeaponStopFire", StopFire);
             Messenger.AddListener("ChangeRateOfFire", ChangeRateOfFire);
 
+            /*
             if (GetComponent<LineRenderer>())
             {
                 tracer = GetComponent<LineRenderer>();
             }
+             * */
         }
 	
         // Update is called once per frame
@@ -48,6 +54,11 @@ namespace Assets.Scripts.Player.Handlers
 
             CheckReloadTimer();
             CheckFireTimer();
+
+            if (ShowSpread)
+            {
+                Debug_ShowSpread();
+            }
         }
         #endregion Monobehaviour
         #region Private Methods
@@ -122,41 +133,12 @@ namespace Assets.Scripts.Player.Handlers
 
         private void Fire()
         {
-            _primaryWeapon.Fire();
-
-            float shotDistance = _primaryWeapon.GetRange();
-            // This works... For some reason.
-            //Debug.DrawLine(playerPos, mousePos);
-
-            Ray ray = new Ray(_primaryWeapon.bulletEjectionPoint.position, _primaryWeapon.bulletEjectionPoint.forward);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, shotDistance))
-            {
-                shotDistance = hit.distance;
-                // Check for hit
-                if (hit.collider.GetComponent<Entity>())
-                {
-                    // Apply damage to what was hit.
-                    hit.collider.GetComponent<Entity>().TakeDamage(_primaryWeapon.GetDamage());
-                }
-            }
-
-            if (_primaryWeapon.GetTracer())
-            {
-                StartCoroutine("RenderTracer", ray.direction*shotDistance);
-            }
-
-            // Eject new Shell after shot
-            Rigidbody newShell =
-                Instantiate(_primaryWeapon.shell, _primaryWeapon.shellEjectionPoint.position, Quaternion.identity) as
-                    Rigidbody;
-            newShell.AddForce(_primaryWeapon.shellEjectionPoint.forward * Random.Range(150f,200f) + _primaryWeapon.bulletEjectionPoint.forward * Random.Range(-10f,10f));
-
-            Debug.DrawRay(ray.origin, ray.direction * shotDistance, Color.red, 1);
-            
-            Debug.Log("BANG");
-
+            // Check for burst, fire 3 in a row. Else, fire once.
+            if (_primaryWeapon._fireRate == RateOfFire.Burst)
+                for(int i = 0; i < 3; i++)
+                    _primaryWeapon.Fire();
+            else
+                _primaryWeapon.Fire();
         }
 
         private void ChangeRateOfFire()
@@ -201,13 +183,18 @@ namespace Assets.Scripts.Player.Handlers
                 str += "Firing: " + _firingCounter + "|" + (TIMER_MODIFIER / (_primaryWeapon.GetFireSpeed() * TIMER_MODIFIER)) * TIMER_MODIFIER + "\n";
             else
                 str += "\n";
+
+            if (ShowSpread)
+                str += "Spread: " + _primaryWeapon.GetSpread() + " Degrees\n";
+            else
+                str += "\n";
         
 
             GUI.Box(new Rect(Screen.width-155, 5, 150, 300), str);
             GUI.Box(new Rect(Screen.width - 205, Screen.height - 105, 200, 100), debugStr);
         }
 
-        /* ENUMS */
+        /* ENUMS 
 
         IEnumerator RenderTracer(Vector3 hitPoint)
         {
@@ -217,6 +204,39 @@ namespace Assets.Scripts.Player.Handlers
 
             yield return null;
             tracer.enabled = false;
+        }*/
+
+
+
+        /* DEBUG */
+
+        void Debug_ShowSpread()
+        {
+            Transform BEP = _primaryWeapon.bulletEjectionPoint;
+            float range = _primaryWeapon.GetRange();
+            float ang = _primaryWeapon.GetSpread()/2f;
+
+            Vector3 ODir = BEP.forward;
+
+            Vector3 RDir = Quaternion.Euler(0, ang, 0) * ODir;
+            Vector3 LDir = Quaternion.Euler(0, -ang, 0) * ODir;
+            
+
+            //Perfect Shot
+            Ray rayC = new Ray(BEP.position, ODir);
+
+            //Far Right
+            Ray rayR = new Ray(BEP.position, RDir);
+
+            //Far Left
+            Ray rayL = new Ray(BEP.position, LDir);
+
+            
+
+
+            //Debug.DrawRay(rayC.origin, rayC.direction * range, Color.green);
+            Debug.DrawRay(rayR.origin, rayR.direction * range, Color.blue);
+            Debug.DrawRay(rayL.origin, rayL.direction * range, Color.blue);
         }
     }
 }
