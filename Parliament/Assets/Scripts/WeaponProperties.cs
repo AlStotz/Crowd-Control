@@ -12,6 +12,11 @@ namespace Assets.Scripts.Player.Shootable
     {
         #region Fields
 
+        public AudioClip GunShotAudioClip;
+        public AudioClip GunReloadClip;
+        public AudioClip GunDryClip;
+        private AudioSource source;
+
         //private LineRenderer tracer;
 
         //public Transform spawn;
@@ -77,6 +82,11 @@ namespace Assets.Scripts.Player.Shootable
             get { return this._isSingleShot; }
         }
         #endregion Properties
+
+        void Awake()
+        {
+            source = GetComponent<AudioSource>();
+        }
 
         public WeaponProperties(string name, string description, AmmoType type, float fireSpeed, bool canFullAuto, bool canBurst, bool canSingleShot, RateOfFire fireRate, bool tracer, 
             float range, float spread, float accuracy, int ammoTotalcount, 
@@ -211,7 +221,11 @@ namespace Assets.Scripts.Player.Shootable
         public bool CheckReload() // Check to see if the weapon is reloadable
         {
             if (_ammoClipCount < _ammoClipMax && _ammoTotalCount > 0) // Check to see if a reload is possible
+            {
+                Debug.Log("RELOAD!");
+                source.PlayOneShot(GunReloadClip, 1.0f);
                 return true;
+            }
             else
                 return false;
         }
@@ -237,8 +251,12 @@ namespace Assets.Scripts.Player.Shootable
         }
         public void FireBullet()
         {
+            
+
             if (_ammoClipCount > 0) // Has ammo, fire single shot
             {
+                source.PlayOneShot(GunShotAudioClip, 1.0f);
+
                 _ammoClipCount -= 1;
 
                 float shotDistance = _range;
@@ -267,6 +285,7 @@ namespace Assets.Scripts.Player.Shootable
             }
             else // Out of ammo
             {
+                source.PlayOneShot(GunDryClip, 1.0f);
                 //Reload();
                 // Start 'No Ammo' Sound
             }

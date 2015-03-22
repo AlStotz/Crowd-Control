@@ -31,6 +31,7 @@ namespace Assets.Scripts.Player.Handlers
         #endregion Fields
 
         #region Monobehaviour
+
         // Use this for initialization
         void Start ()
         {
